@@ -1,5 +1,5 @@
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import { StackContext, Api, EventBus, use } from "sst/constructs";
+import { StackContext, Api, use } from "sst/constructs";
 import { Storage } from "./StorageStack";
 
 export function API({ stack }: StackContext) {
@@ -17,15 +17,10 @@ export function API({ stack }: StackContext) {
     code: lambda.Code.fromAsset("layers/lighthouse"),
   });
 
-  const bus = new EventBus(stack, "bus", {
-    defaults: {
-      retries: 10,
-    },
-  });
   const api = new Api(stack, "api", {
     defaults: {
       function: {
-        bind: [bus, bucket],
+        bind: [bucket],
       },
     },
     routes: {
@@ -44,10 +39,6 @@ export function API({ stack }: StackContext) {
         },
       },
     },
-  });
-
-  bus.subscribe("todo.created", {
-    handler: "packages/functions/src/events/todo-created.handler",
   });
 
   stack.addOutputs({
