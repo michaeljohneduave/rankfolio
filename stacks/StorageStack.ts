@@ -7,16 +7,19 @@ export function Storage({ stack }: StackContext) {
       url: "string",
       name: "string",
       latestScreenshot: "string",
-      latestLhReport: "string",
+      latestLhUrl: "string",
+      latestLhData: "string",
       createdAt: "number",
       updatedAt: "number",
       upVotes: "number",
       downVotes: "number",
+      status: "string",
     },
     primaryIndex: {
       partitionKey: "url",
     },
   });
+
   return {
     bucket,
     table,
