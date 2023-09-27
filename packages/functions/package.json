@@ -20,6 +20,7 @@
     "aws-sdk": "^2.1464.0",
     "chromium^116.0.0": "link:@sparticuz/chromium^116.0.0",
     "lighthouse": "^11.1.0",
+    "node-fetch": "^3.3.2",
     "puppeteer-core": "21.3.4"
   }
 }

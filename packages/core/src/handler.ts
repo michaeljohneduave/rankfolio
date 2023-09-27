@@ -15,6 +15,7 @@ export default function handler<T>(
         error: e instanceof Error ? e.message : String(e),
       });
     }
+
     return {
       body,
       statusCode,
