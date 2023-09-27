@@ -19,6 +19,9 @@ export default function handler<T>(
     return {
       body,
       statusCode,
+      headers: {
+        "Content-Type": "application/json",
+      },
     };
   };
 }
