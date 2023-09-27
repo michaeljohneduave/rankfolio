@@ -19,6 +19,8 @@ const runScreenshot = async (page: Page) => {
   do {
     retries += 1;
     try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       screenshot = (await page.screenshot({ fullPage: false })) as Buffer;
     } catch (e) {
       error = e instanceof Error ? e.message : JSON.stringify(e);
@@ -142,7 +144,7 @@ export const main = async (event: SQSEvent) => {
 
   try {
     const pages = await browser.pages();
-    await Promise.all(pages.map((page) => page.close()));
+    await Promise.all(pages.map((page) => page.isClosed() || page.close()));
     await browser.close();
   } catch (e) {
     console.error(e);
@@ -172,7 +174,7 @@ export const main = async (event: SQSEvent) => {
 
   if (result.report) {
     params.Item.latestLhUrl = result?.url || "";
-    params.Item.latestLhData = JSON.stringify(result.report);
+    params.Item.latestLhData = JSON.stringify(result.report.categories);
   } else {
     console.error(lighthouseError);
   }
