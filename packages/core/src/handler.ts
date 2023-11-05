@@ -10,6 +10,7 @@ export default function handler<T>(
       body = await lambda(event, context);
       statusCode = 200;
     } catch (e) {
+      console.error(e);
       statusCode = 500;
       body = JSON.stringify({
         error: e instanceof Error ? e.message : String(e),
