@@ -21,6 +21,8 @@ export const list = handler<string>(async () => {
       delete item.latestLhData;
       return {
         ...item,
+        updatedAt: new Date(item.updatedAt).toISOString(),
+        createdAt: new Date(item.createdAt).toISOString(),
         performance: data.performance.score * 100,
         bestPractices: data["best-practices"].score * 100,
         accessibility: data.accessibility.score * 100,
