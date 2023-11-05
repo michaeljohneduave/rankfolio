@@ -1,2 +1,4 @@
 packages:
   - "packages/**/*"
+  - "!layers/chromium/**"
+  - "!layers/lighthouse/**"

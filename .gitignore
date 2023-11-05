@@ -14,5 +14,5 @@ node_modules
 # local env files
 .env*.local
 
-# layers
-layers/lighthouse
+# serverless files
+.serverless
