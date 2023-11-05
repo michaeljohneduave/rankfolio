@@ -7,7 +7,7 @@ import { Queue } from "sst/node/queue";
 const sqs = new AWS.SQS();
 
 export const main = handler<string>(async (event) => {
-  const size = event?.queryStringParameters?.size || "10";
+  const size = event?.queryStringParameters?.size || "5";
   const response = await fetch(
     "https://raw.githubusercontent.com/emmabostian/developer-portfolios/master/README.md"
   );
