@@ -1,0 +1,16 @@
+service: lighthouse-layer
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-2'}
+
+layers:
+  lighthouse:
+    path: .
+    description: Lighthouse layer
+    compatibleRuntimes:
+      - nodejs18.x
+    licenseInfo: MIT
+    retain: true
