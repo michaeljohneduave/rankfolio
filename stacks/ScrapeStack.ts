@@ -12,22 +12,18 @@ export function Scraper({ stack, app }: StackContext) {
   const layerChromium = new lambda.LayerVersion(stack, "chromiumLayers", {
     code: lambda.Code.fromAsset("layers/chromium"),
   });
-  // https://github.com/GoogleChrome/lighthouse/releases/tag/v11.1.0
-  const layerLighthouse = new lambda.LayerVersion(stack, "lighthouseLayers", {
-    code: lambda.Code.fromAsset("layers/lighthouse"),
-  });
-
   const scraperLambda = new Function(stack, "scraper", {
     handler: "packages/functions/src/lambda.main",
     runtime: "nodejs18.x",
-    timeout: 300,
-    layers: [layerChromium, layerLighthouse],
+    timeout: 120,
+    layers: [layerChromium],
     nodejs: {
       esbuild: {
-        external: ["@sparticuz/chromium", "lighthouse"],
+        external: ["@sparticuz/chromium"],
       },
     },
     bind: [bucket, table],
+    memorySize: "2 GB",
   });
 
   const cron = new Cron(stack, "folio-scraper", {
@@ -46,7 +42,7 @@ export function Scraper({ stack, app }: StackContext) {
     },
     cdk: {
       queue: {
-        visibilityTimeout: Duration.seconds(300),
+        visibilityTimeout: Duration.seconds(60),
       },
     },
   });
