@@ -1,36 +1,41 @@
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Cron, Function, Queue, StackContext, use } from "sst/constructs";
-import { Duration } from "aws-cdk-lib/core";
 import { Storage } from "./StorageStack";
 
-export function Scraper({ stack, app }: StackContext) {
+export function Scraper({ stack }: StackContext) {
   const { bucket, table } = use(Storage);
 
-  // I have no idea what I'm doing here; basically matching
-  // chromium (116.0.0) + lighthouse (11.1.0) + puppeteer-core (21.3.4) versions
-  // https://github.com/Sparticuz/chromium/releases/tag/v116.0.0
-  const layerChromium = new lambda.LayerVersion(stack, "chromiumLayers", {
-    code: lambda.Code.fromAsset("layers/chromium"),
-  });
   const scraperLambda = new Function(stack, "scraper", {
-    handler: "packages/functions/src/lambda.main",
+    handler: "packages/functions/src/scrapeProfile.main",
     runtime: "nodejs18.x",
-    timeout: 120,
-    layers: [layerChromium],
+    timeout: 60,
+    layers: [
+      lambda.LayerVersion.fromLayerVersionArn(
+        stack,
+        "chromiumLayers",
+        "arn:aws:lambda:us-east-2:951043172154:layer:chromium:3"
+      ),
+      lambda.LayerVersion.fromLayerVersionArn(
+        stack,
+        "lighthouseLayers",
+        "	arn:aws:lambda:us-east-2:951043172154:layer:lighthouse:9"
+      ),
+    ],
     nodejs: {
       esbuild: {
-        external: ["@sparticuz/chromium"],
+        external: ["@sparticuz/chromium", "lighthouse"],
       },
     },
     bind: [bucket, table],
-    memorySize: "2 GB",
+    memorySize: "3008 MB",
   });
 
   const cron = new Cron(stack, "folio-scraper", {
     schedule: "rate(10 minutes)",
-    job: "packages/functions/src/scraper.main",
+    job: "packages/functions/src/scrapeProfile.main",
     enabled: false,
   });
+
   const queue = new Queue(stack, "folio-queue", {
     consumer: {
       function: scraperLambda,
@@ -40,14 +45,10 @@ export function Scraper({ stack, app }: StackContext) {
         },
       },
     },
-    cdk: {
-      queue: {
-        visibilityTimeout: Duration.seconds(60),
-      },
-    },
   });
 
   cron.bind([queue]);
+  scraperLambda.bind([queue]);
 
   return {
     cron,

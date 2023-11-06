@@ -119,7 +119,6 @@ export const main = handler<string>(async (event: APIGatewayProxyEvent) => {
   if (!url) throw new Error("url is required");
 
   const browser = await puppeteer.launch({
-    // args: process.env.IS_LOCAL ? lambdaArgs : chromium.args,
     args: chromium.args,
     defaultViewport: null,
     executablePath: process.env.IS_LOCAL
