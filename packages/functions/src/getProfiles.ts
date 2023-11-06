@@ -5,6 +5,7 @@ import parserEB from "@rankfolio/core/parserEB";
 import { Queue } from "sst/node/queue";
 
 const sqs = new AWS.SQS();
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 export const main = handler<string>(async (event) => {
   const size = event?.queryStringParameters?.size || "5";
@@ -14,8 +15,8 @@ export const main = handler<string>(async (event) => {
 
   const result = parserEB(await response.text()).slice(0, parseInt(size));
 
-  await Promise.all(
-    result.map((folio) => {
+  await Promise.allSettled(
+    result.map(async (folio) => {
       return sqs
         .sendMessage({
           QueueUrl: Queue["folio-queue"].queueUrl,
