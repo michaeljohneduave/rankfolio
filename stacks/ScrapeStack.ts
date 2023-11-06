@@ -18,7 +18,7 @@ export function Scraper({ stack }: StackContext) {
       lambda.LayerVersion.fromLayerVersionArn(
         stack,
         "lighthouseLayers",
-        "	arn:aws:lambda:us-east-2:951043172154:layer:lighthouse:9"
+        "arn:aws:lambda:us-east-2:951043172154:layer:lighthouse:9"
       ),
     ],
     nodejs: {
