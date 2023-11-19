@@ -2,10 +2,12 @@ import fetch from "node-fetch";
 import AWS from "aws-sdk";
 import handler from "@rankfolio/core/handler";
 import parserEB from "@rankfolio/core/parserEB";
+import DynamoDB from "aws-sdk/clients/dynamodb";
+import SQS from "aws-sdk/clients/sqs";
+import fetch from "node-fetch";
 import { Queue } from "sst/node/queue";
 
-const sqs = new AWS.SQS();
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const sqs = new SQS();
 
 export const main = handler<string>(async (event) => {
   const size = event?.queryStringParameters?.size || "5";

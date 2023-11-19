@@ -1,19 +1,20 @@
-import handler from "@rankfolio/core/handler";
 import chromium from "@sparticuz/chromium";
-import { APIGatewayProxyEvent, SQSEvent } from "aws-lambda";
-import puppeteer, { Page } from "puppeteer-core";
-import * as aws from "aws-sdk";
-import { Bucket } from "sst/node/bucket";
 import lighthouse from "lighthouse";
-import { Table } from "sst/node/table";
+import { SQSEvent } from "aws-lambda";
+import DynamoDB from "aws-sdk/clients/dynamodb";
+import { Bucket } from "sst/node/bucket";
+import S3 from "aws-sdk/clients/s3";
+import SQS from "aws-sdk/clients/sqs";
+import puppeteer, { Page } from "puppeteer-core";
 import { Queue } from "sst/node/queue";
+import { Table } from "sst/node/table";
 
 const LOCAL_CHROMIUM_PATH =
   "/tmp/local-chromium-113/chrome/mac_arm-113.0.5672.63/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing";
 
-const s3 = new aws.S3();
-const dynamoDb = new aws.DynamoDB.DocumentClient();
-const sqs = new aws.SQS();
+const s3 = new S3();
+const dynamoDb = new DynamoDB.DocumentClient();
+const sqs = new SQS();
 
 const runScreenshot = async (page: Page) => {
   let screenshot;

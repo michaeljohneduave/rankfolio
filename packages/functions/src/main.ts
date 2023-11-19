@@ -1,9 +1,9 @@
-import * as AWS from "aws-sdk";
+import DynamoDB from "aws-sdk/clients/dynamodb";
 
 import handler from "@rankfolio/core/handler";
 import { Table } from "sst/node/table";
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const dynamoDb = new DynamoDB.DocumentClient();
 
 export const list = handler<string>(async () => {
   const params = {
