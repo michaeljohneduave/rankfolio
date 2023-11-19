@@ -1,5 +1,9 @@
 {
-  "search.exclude": {
-    "**/.sst": true
-  }
+	"search.exclude": {
+		"**/.sst": true
+	},
+	"editor.codeActionsOnSave": {
+		"quickfix.biome": true
+	},
+	"editor.formatOnSave": true
 }

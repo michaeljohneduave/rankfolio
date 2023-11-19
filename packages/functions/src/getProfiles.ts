@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-import AWS from "aws-sdk";
 import handler from "@rankfolio/core/handler";
 import parserEB from "@rankfolio/core/parserEB";
 import DynamoDB from "aws-sdk/clients/dynamodb";
@@ -12,7 +10,7 @@ const sqs = new SQS();
 export const main = handler<string>(async (event) => {
   const size = event?.queryStringParameters?.size || "5";
   const response = await fetch(
-    "https://raw.githubusercontent.com/emmabostian/developer-portfolios/master/README.md"
+    "https://raw.githubusercontent.com/emmabostian/developer-portfolios/master/README.md",
   );
 
   const result = parserEB(await response.text()).slice(0, parseInt(size));
@@ -28,7 +26,7 @@ export const main = handler<string>(async (event) => {
           }),
         })
         .promise();
-    })
+    }),
   );
   return JSON.stringify(result);
 });

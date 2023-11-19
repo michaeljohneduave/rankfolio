@@ -26,19 +26,26 @@ const runScreenshot = async (page: Page) => {
     retries += 1;
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-
       screenshot = (await page.screenshot({ fullPage: true })) as Buffer;
-    } catch (e: any) {
-      if (e.message.includes("Page is too large")) {
-        error = "Page is too large, chrome gave up";
+    } catch (e) {
+      const message = e instanceof Error ? e.message : JSON.stringify(e);
+      error = e instanceof Error ? e.message : JSON.stringify(e);
+
+      if (message.includes("Page is too large")) {
         break;
       } else {
-        error = e instanceof Error ? e.message : JSON.stringify(e);
-        console.error(error);
+        console.error(e);
         console.error("Retrying screenshot...");
       }
     }
   } while (retries < 3 && !screenshot);
+
+  if (error) {
+    return {
+      data: screenshotUrl,
+      error,
+    };
+  }
 
   if (screenshot) {
     try {
@@ -83,7 +90,7 @@ const runLighthouse = async (url: string, page: Page) => {
           logLevel: "warn",
         },
         undefined,
-        page
+        page,
       );
     } catch (e) {
       error = e instanceof Error ? e.message : JSON.stringify(e);
@@ -137,12 +144,11 @@ export const main = async (event: SQSEvent) => {
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "networkidle0" });
 
-    const { data: screenshot, error: screenshotError } = await runScreenshot(
-      page
-    );
+    const { data: screenshot, error: screenshotError } =
+      await runScreenshot(page);
     const { data: lhResult, error: lighthouseError } = await runLighthouse(
       url,
-      page
+      page,
     );
 
     try {
@@ -155,7 +161,7 @@ export const main = async (event: SQSEvent) => {
     }
 
     const params = {
-      TableName: Table["folios"].tableName,
+      TableName: Table.folios.tableName,
       Item: {
         url: url,
         name: name,

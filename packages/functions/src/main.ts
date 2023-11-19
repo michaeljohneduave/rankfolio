@@ -7,7 +7,7 @@ const dynamoDb = new DynamoDB.DocumentClient();
 
 export const list = handler<string>(async () => {
   const params = {
-    TableName: Table["folios"].tableName,
+    TableName: Table.folios.tableName,
   };
 
   const result = await dynamoDb.scan(params).promise();
@@ -18,7 +18,6 @@ export const list = handler<string>(async () => {
 
       const data = JSON.parse(item.latestLhData);
 
-      delete item.latestLhData;
       return {
         ...item,
         updatedAt: new Date(item.updatedAt).toISOString(),
@@ -29,6 +28,6 @@ export const list = handler<string>(async () => {
         seo: data.seo.score * 100,
         pwa: data.pwa.score * 100,
       };
-    })
+    }),
   );
 });

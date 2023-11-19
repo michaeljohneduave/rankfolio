@@ -1,7 +1,6 @@
-import * as lambda from "aws-cdk-lib/aws-lambda";
-import { StackContext, Api, use } from "sst/constructs";
-import { Storage } from "./StorageStack";
+import { Api, StackContext, use } from "sst/constructs";
 import { Scraper } from "./ScrapeStack";
+import { Storage } from "./StorageStack";
 
 export function API({ stack }: StackContext) {
   const { bucket, table } = use(Storage);
